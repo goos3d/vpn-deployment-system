@@ -1,0 +1,33 @@
+# WireGuard Server Configuration Template
+# This file should be customized for each deployment
+
+[Interface]
+# Server private key - generated during setup
+PrivateKey = {{ server_private_key }}
+
+# Server VPN IP address and network
+Address = {{ server_ip }}/{{ network_prefix }}
+
+# Port to listen on
+ListenPort = {{ listen_port }}
+
+# Don't save config changes automatically
+SaveConfig = false
+
+# NAT and firewall rules for internet access
+PostUp = iptables -A FORWARD -i %i -j ACCEPT; iptables -A FORWARD -o %i -j ACCEPT; iptables -t nat -A POSTROUTING -o {{ internet_interface }} -j MASQUERADE
+PostDown = iptables -D FORWARD -i %i -j ACCEPT; iptables -D FORWARD -o %i -j ACCEPT; iptables -t nat -D POSTROUTING -o {{ internet_interface }} -j MASQUERADE
+
+# Alternative PostUp/PostDown for UFW (uncomment if using UFW)
+# PostUp = ufw route allow in on %i out on {{ internet_interface }}; iptables -t nat -I POSTROUTING -o {{ internet_interface }} -j MASQUERADE
+# PostDown = ufw route delete allow in on %i out on {{ internet_interface }}; iptables -t nat -D POSTROUTING -o {{ internet_interface }} -j MASQUERADE
+
+# Client peers will be added below
+# Each client gets a [Peer] section
+
+# Example client peer:
+# [Peer]
+# # Client: Dr-Smith-Laptop (10.0.0.2)
+# PublicKey = CLIENT_PUBLIC_KEY_HERE
+# PresharedKey = OPTIONAL_PRESHARED_KEY_HERE
+# AllowedIPs = 10.0.0.2/32

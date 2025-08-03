@@ -1,0 +1,33 @@
+[Interface]
+# {{ client_name }} - Generated on {{ timestamp }}
+# VPN Configuration for WireGuard
+
+# Client private key (keep this secret!)
+PrivateKey = {{ client_private_key }}
+
+# Client VPN IP address
+Address = {{ client_ip }}/32
+
+# DNS servers to use when connected
+DNS = {{ dns_servers }}
+
+# Optional: Set MTU if needed
+# MTU = 1420
+
+[Peer]
+# Server information
+PublicKey = {{ server_public_key }}
+
+# Optional: Preshared key for additional security
+{% if preshared_key %}PresharedKey = {{ preshared_key }}{% endif %}
+
+# Server endpoint (IP:Port)
+Endpoint = {{ server_endpoint }}:{{ server_port }}
+
+# What traffic to route through VPN
+# 0.0.0.0/0 = all traffic (full tunnel)
+# 10.0.0.0/24 = only VPN network traffic
+AllowedIPs = {{ allowed_ips }}
+
+# Keep connection alive (helps with NAT)
+PersistentKeepalive = 25
