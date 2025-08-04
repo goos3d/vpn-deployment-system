@@ -1,0 +1,190 @@
+================================================================================
+                       VM CLEANUP CHECKLIST
+================================================================================
+
+SYSTEMATIC GUIDE FOR REMOVING PERSONAL TRACES WHILE PRESERVING VPN
+
+IMPORTANT: This checklist removes your personal data while keeping the VPN 
+running for Dr. Kover. Follow in order.
+
+================================================================================
+PHASE 1: BACKUP CRITICAL FILES
+================================================================================
+
+1. Backup WireGuard Configuration
+   cp /etc/wireguard/wg0.conf /etc/wireguard/wg0.conf.backup
+   cp -r /etc/wireguard/clients/ /etc/wireguard/clients_backup/
+
+2. Backup VPN Scripts (if they exist)
+   cp /etc/wireguard/add-peer.sh /etc/wireguard/add-peer.sh.backup
+   cp /etc/wireguard/vpn-manager.sh /etc/wireguard/vpn-manager.sh.backup
+
+3. Test VPN is working before cleanup
+   systemctl status wg-quick@wg0
+   wg show
+
+================================================================================
+PHASE 2: REMOVE COMMAND HISTORY
+================================================================================
+
+1. Clear bash history
+   history -c
+   rm ~/.bash_history
+
+2. Clear zsh history (if applicable)
+   rm ~/.zsh_history
+
+3. Clear any other shell histories
+   rm ~/.sh_history 2>/dev/null || true
+
+4. Clear system logs (optional - keeps VPN logs)
+   journalctl --vacuum-time=1d
+
+================================================================================
+PHASE 3: REMOVE PERSONAL FILES
+================================================================================
+
+1. Remove home directory contents (except .ssh if needed for access)
+   cd ~
+   rm -rf Documents/
+   rm -rf Downloads/
+   rm -rf Desktop/
+   rm -rf Pictures/
+   rm -rf Videos/
+   rm -rf Music/
+
+2. Remove temporary files
+   rm -rf /tmp/*
+   rm -rf /var/tmp/*
+
+3. Remove cached files
+   rm -rf ~/.cache/
+   rm -rf ~/.local/
+
+4. Remove personal configs (CAREFUL - keep SSH if you need remote access)
+   rm -rf ~/.config/
+   rm -rf ~/.bashrc.backup
+   rm -rf ~/.vimrc.backup
+
+================================================================================
+PHASE 4: REMOVE DEVELOPMENT FILES
+================================================================================
+
+1. Remove any development directories
+   rm -rf /root/vpn-work/
+   rm -rf /root/development/
+   rm -rf /root/projects/
+   rm -rf /root/scripts/
+
+2. Remove any uploaded files not related to VPN
+   find /root -name "*.py" -not -path "/etc/wireguard/*" -delete
+   find /root -name "*.sh" -not -path "/etc/wireguard/*" -delete
+   find /root -name "*.txt" -not -path "/etc/wireguard/*" -delete
+
+================================================================================
+PHASE 5: CLEAN SYSTEM TRACES
+================================================================================
+
+1. Clear package manager history
+   apt clean
+   apt autoclean
+
+2. Clear logs (keep essential system logs)
+   > /var/log/auth.log
+   > /var/log/syslog
+   > /var/log/dpkg.log
+
+3. Clear network connection history
+   > /var/log/wtmp
+   > /var/log/btmp
+   > /var/log/lastlog
+
+4. Clear cron logs
+   > /var/log/cron.log
+
+================================================================================
+PHASE 6: SECURE SSH ACCESS FOR DR. KOVER
+================================================================================
+
+1. Create a clean SSH key for Dr. Kover (if he needs access)
+   ssh-keygen -t rsa -b 4096 -C "dr.kover@dentaloffice"
+   
+2. Set up authorized_keys properly
+   mkdir -p ~/.ssh
+   chmod 700 ~/.ssh
+   # Add his public key to ~/.ssh/authorized_keys
+   chmod 600 ~/.ssh/authorized_keys
+
+3. Secure SSH configuration
+   nano /etc/ssh/sshd_config
+   # Ensure: PasswordAuthentication no
+   # Ensure: PubkeyAuthentication yes
+   systemctl restart ssh
+
+================================================================================
+PHASE 7: FINAL VPN VERIFICATION
+================================================================================
+
+1. Test VPN server is still running
+   systemctl status wg-quick@wg0
+   wg show
+
+2. Test existing client can still connect
+   (Test with Dr. Kover's existing device)
+
+3. Test new peer addition works
+   cd /etc/wireguard
+   ./add-peer.sh TestCleanup
+   systemctl restart wg-quick@wg0
+   ls -la DrKover-TestCleanup.conf
+   
+4. Clean up test
+   rm DrKover-TestCleanup.conf
+   nano wg0.conf  # Remove test peer section
+
+5. Final restart
+   systemctl restart wg-quick@wg0
+
+================================================================================
+PHASE 8: DOCUMENT HANDOFF
+================================================================================
+
+1. Create handoff document for Dr. Kover
+   nano /etc/wireguard/VPN_SERVER_INFO.txt
+   
+   Include:
+   - Server IP: 184.105.7.112
+   - VPN Port: 51820
+   - How to add devices: ./add-peer.sh [name]
+   - Your contact info for support
+   - Current device list
+
+2. Set proper ownership
+   chown root:root /etc/wireguard/*
+   chmod 600 /etc/wireguard/*.conf
+   chmod 755 /etc/wireguard/*.sh
+
+================================================================================
+FINAL CHECKLIST
+================================================================================
+
+BEFORE LOGGING OUT:
+
+[ ] VPN service is running (systemctl status wg-quick@wg0)
+[ ] Dr. Kover's devices can still connect
+[ ] Peer addition script works (./add-peer.sh)
+[ ] All personal files removed
+[ ] Command history cleared
+[ ] SSH access secured for Dr. Kover
+[ ] Handoff documentation created
+[ ] Contact info provided for future support
+
+AFTER CLEANUP, DR. KOVER HAS:
+- Working VPN server
+- Ability to add new devices easily
+- Your contact info for paid support
+- Clean system with no personal traces
+
+================================================================================
+
+CLEANUP COMPLETE - PROFESSIONAL HANDOFF ACHIEVED

@@ -1,0 +1,368 @@
+================================================================================
+                    FINAL SCRIPTS FOR DR. KOVER'S VM
+================================================================================
+
+These are the exact scripts that need to be uploaded to Dr. Kover's VM server
+at 184.105.7.112 in the /etc/wireguard directory.
+
+================================================================================
+FILE 1: add-peer.sh
+================================================================================
+
+#!/bin/bash
+
+# Dr. Kover VPN - Easy Peer Addition Script
+# Usage: ./add-peer.sh [device-name]
+
+if [ $# -eq 0 ]; then
+    echo "Usage: ./add-peer.sh [device-name]"
+    echo "Example: ./add-peer.sh iPad"
+    exit 1
+fi
+
+DEVICE_NAME="$1"
+CONFIG_FILE="DrKover-${DEVICE_NAME}.conf"
+SERVER_CONFIG="/etc/wireguard/wg0.conf"
+KEYS_DIR="/etc/wireguard"
+
+echo "Adding new peer: $DEVICE_NAME"
+
+# Generate private key for client
+CLIENT_PRIVATE_KEY=$(wg genkey)
+CLIENT_PUBLIC_KEY=$(echo "$CLIENT_PRIVATE_KEY" | wg pubkey)
+
+# Get server public key
+SERVER_PUBLIC_KEY=$(grep PrivateKey "$SERVER_CONFIG" | cut -d' ' -f3 | wg pubkey)
+
+# Find next available IP
+LAST_IP=$(grep -E "AllowedIPs.*10.0.0" "$SERVER_CONFIG" | sed 's/.*10.0.0.\([0-9]*\).*/\1/' | sort -n | tail -1)
+if [ -z "$LAST_IP" ]; then
+    NEXT_IP=2
+else
+    NEXT_IP=$((LAST_IP + 1))
+fi
+
+# Create client configuration
+cat > "$CONFIG_FILE" << EOF
+[Interface]
+PrivateKey = $CLIENT_PRIVATE_KEY
+Address = 10.0.0.$NEXT_IP/32
+DNS = 1.1.1.1, 8.8.8.8
+
+[Peer]
+PublicKey = $SERVER_PUBLIC_KEY
+AllowedIPs = 0.0.0.0/0
+Endpoint = 184.105.7.112:51820
+PersistentKeepalive = 25
+EOF
+
+# Add peer to server configuration
+cat >> "$SERVER_CONFIG" << EOF
+
+# DrKover - $DEVICE_NAME
+[Peer]
+PublicKey = $CLIENT_PUBLIC_KEY
+AllowedIPs = 10.0.0.$NEXT_IP/32
+EOF
+
+echo "✅ Peer '$DEVICE_NAME' added successfully!"
+echo "📁 Configuration saved as: $CONFIG_FILE"
+echo "🌐 Assigned IP: 10.0.0.$NEXT_IP"
+echo ""
+echo "Next steps:"
+echo "1. systemctl restart wg-quick@wg0"
+echo "2. Transfer $CONFIG_FILE to your device"
+echo "3. Import into WireGuard app"
+
+================================================================================
+FILE 2: vpn-manager.sh
+================================================================================
+
+#!/bin/bash
+
+# Dr. Kover VPN Management System
+clear
+
+echo "╔══════════════════════════════════════════════════════════════════════════════╗"
+echo "║                        Dr. Kover VPN Management System                      ║"
+echo "╚══════════════════════════════════════════════════════════════════════════════╝"
+echo ""
+
+while true; do
+    echo "What would you like to do?"
+    echo ""
+    echo "1) 📱 Add a new device"
+    echo "2) 📊 Check VPN status"
+    echo "3) 📋 List all devices"
+    echo "4) 🔍 Show connected devices"
+    echo "5) 🔄 Restart VPN service"
+    echo "6) 📁 List configuration files"
+    echo "7) ❌ Exit"
+    echo ""
+    read -p "Enter your choice (1-7): " choice
+
+    case $choice in
+        1)
+            echo ""
+            read -p "Enter device name (e.g., iPad, iPhone, OfficePC): " device_name
+            if [ ! -z "$device_name" ]; then
+                ./add-peer.sh "$device_name"
+                echo ""
+                read -p "Restart VPN service now? (y/n): " restart
+                if [ "$restart" = "y" ]; then
+                    systemctl restart wg-quick@wg0
+                    echo "✅ VPN service restarted"
+                fi
+            else
+                echo "❌ Device name cannot be empty"
+            fi
+            ;;
+        2)
+            echo ""
+            echo "VPN Service Status:"
+            systemctl status wg-quick@wg0 --no-pager -l
+            ;;
+        3)
+            echo ""
+            echo "All configured devices:"
+            grep -E "# DrKover -" /etc/wireguard/wg0.conf | sed 's/# DrKover - /- /'
+            ;;
+        4)
+            echo ""
+            echo "Currently connected devices:"
+            wg show
+            ;;
+        5)
+            echo ""
+            systemctl restart wg-quick@wg0
+            echo "✅ VPN service restarted"
+            ;;
+        6)
+            echo ""
+            echo "Configuration files:"
+            ls -la DrKover-*.conf 2>/dev/null || echo "No configuration files found"
+            ;;
+        7)
+            echo ""
+            echo "Goodbye!"
+            exit 0
+            ;;
+        *)
+            echo ""
+            echo "❌ Invalid choice. Please enter 1-7."
+            ;;
+    esac
+    
+    echo ""
+    echo "Press Enter to continue..."
+    read
+    clear
+    echo "╔══════════════════════════════════════════════════════════════════════════════╗"
+    echo "║                        Dr. Kover VPN Management System                      ║"
+    echo "╚══════════════════════════════════════════════════════════════════════════════╝"
+    echo ""
+done
+
+================================================================================
+FILE 3: vpn-status.sh
+================================================================================
+
+#!/bin/bash
+
+# Dr. Kover VPN Status Checker
+clear
+
+echo "╔══════════════════════════════════════════════════════════════════════════════╗"
+echo "║                           Dr. Kover VPN Status                              ║"
+echo "╚══════════════════════════════════════════════════════════════════════════════╝"
+echo ""
+
+# Check if VPN service is running
+echo "🔍 VPN Service Status:"
+if systemctl is-active --quiet wg-quick@wg0; then
+    echo "✅ WireGuard VPN is RUNNING"
+else
+    echo "❌ WireGuard VPN is NOT RUNNING"
+    echo "   Try: systemctl start wg-quick@wg0"
+fi
+echo ""
+
+# Show server information
+echo "🌐 Server Information:"
+echo "   Server IP: 184.105.7.112"
+echo "   VPN Port: 51820"
+echo "   Network: 10.0.0.x"
+echo ""
+
+# Show configured devices
+echo "📱 Configured Devices:"
+DEVICE_COUNT=$(grep -c "# DrKover -" /etc/wireguard/wg0.conf 2>/dev/null || echo "0")
+if [ "$DEVICE_COUNT" -gt 0 ]; then
+    grep -E "# DrKover -" /etc/wireguard/wg0.conf | sed 's/# DrKover - /   ✓ /'
+    echo "   Total: $DEVICE_COUNT devices configured"
+else
+    echo "   No devices configured yet"
+fi
+echo ""
+
+# Show currently connected devices
+echo "🔗 Currently Connected:"
+CONNECTED=$(wg show wg0 peers 2>/dev/null | wc -l)
+if [ "$CONNECTED" -gt 0 ]; then
+    echo "   $CONNECTED devices connected"
+    wg show wg0 | grep -A2 "peer:" | while read line; do
+        if [[ $line == peer:* ]]; then
+            echo "   📱 Device connected"
+        fi
+    done
+else
+    echo "   No devices currently connected"
+fi
+echo ""
+
+# Show recent connection activity
+echo "📊 Recent Activity:"
+journalctl -u wg-quick@wg0 --since "1 hour ago" --no-pager -q | tail -5 | while read line; do
+    echo "   $line"
+done || echo "   No recent activity"
+echo ""
+
+# Show system resources
+echo "💾 System Resources:"
+echo "   Uptime: $(uptime -p)"
+echo "   Memory: $(free -h | awk '/^Mem:/ {print $3 "/" $2}')"
+echo "   Disk: $(df -h / | awk 'NR==2 {print $3 "/" $2 " (" $5 " used)"}')"
+echo ""
+
+echo "Need help? Contact thomas@eastbayav.com or (510) 666-5915"
+
+================================================================================
+FILE 4: dr-kover-final-setup.sh
+================================================================================
+
+#!/bin/bash
+
+# Dr. Kover VPN - Final VM Setup Script
+# This script deploys all the peer management tools
+
+echo "╔══════════════════════════════════════════════════════════════════════════════╗"
+echo "║              Dr. Kover VPN - Final Setup Deployment                         ║"
+echo "╚══════════════════════════════════════════════════════════════════════════════╝"
+echo ""
+
+# Ensure we're in the right directory
+cd /etc/wireguard
+
+# The add-peer.sh script should already be here, but let's make sure it's executable
+if [ ! -f "add-peer.sh" ]; then
+    echo "❌ add-peer.sh not found. Please upload it first."
+    exit 1
+fi
+
+# The vpn-manager.sh script should already be here
+if [ ! -f "vpn-manager.sh" ]; then
+    echo "❌ vpn-manager.sh not found. Please upload it first."
+    exit 1
+fi
+
+# The vpn-status.sh script should already be here
+if [ ! -f "vpn-status.sh" ]; then
+    echo "❌ vpn-status.sh not found. Please upload it first."
+    exit 1
+fi
+
+echo "🔧 Setting up Dr. Kover's VPN management system..."
+
+# Make all scripts executable
+chmod +x add-peer.sh
+chmod +x vpn-manager.sh
+chmod +x vpn-status.sh
+chmod +x dr-kover-final-setup.sh
+
+echo "✅ Scripts made executable"
+
+# Test the VPN service
+if systemctl is-active --quiet wg-quick@wg0; then
+    echo "✅ VPN service is running"
+else
+    echo "🔄 Starting VPN service..."
+    systemctl start wg-quick@wg0
+    if systemctl is-active --quiet wg-quick@wg0; then
+        echo "✅ VPN service started successfully"
+    else
+        echo "❌ Failed to start VPN service"
+        exit 1
+    fi
+fi
+
+# Create a quick reference file
+cat > VPN_QUICK_REFERENCE.txt << EOF
+Dr. Kover VPN - Quick Reference
+==============================
+
+Add a new device:
+./add-peer.sh [DeviceName]
+systemctl restart wg-quick@wg0
+
+Interactive menu:
+./vpn-manager.sh
+
+Check status:
+./vpn-status.sh
+
+View connected devices:
+wg show
+
+Your server: 184.105.7.112:51820
+Network range: 10.0.0.x
+
+Support: thomas@eastbayav.com | (510) 666-5915
+EOF
+
+echo "✅ Quick reference guide created"
+
+echo ""
+echo "🎉 SETUP COMPLETE!"
+echo ""
+echo "Dr. Kover's VPN management system is ready:"
+echo ""
+echo "📱 To add devices: ./add-peer.sh [DeviceName]"
+echo "🎛️  Interactive menu: ./vpn-manager.sh"
+echo "📊 Check status: ./vpn-status.sh"
+echo "📖 Reference: cat VPN_QUICK_REFERENCE.txt"
+echo ""
+echo "✅ All systems operational and ready for use!"
+
+================================================================================
+
+UPLOAD INSTRUCTIONS:
+====================
+
+1. Save each script section above as separate files:
+   - add-peer.sh
+   - vpn-manager.sh  
+   - vpn-status.sh
+   - dr-kover-final-setup.sh
+
+2. Upload to VM:
+   scp add-peer.sh root@184.105.7.112:/etc/wireguard/
+   scp vpn-manager.sh root@184.105.7.112:/etc/wireguard/
+   scp vpn-status.sh root@184.105.7.112:/etc/wireguard/
+   scp dr-kover-final-setup.sh root@184.105.7.112:/etc/wireguard/
+
+3. Run setup on VM:
+   ssh root@184.105.7.112
+   cd /etc/wireguard
+   chmod +x dr-kover-final-setup.sh
+   ./dr-kover-final-setup.sh
+
+4. Test system:
+   ./vpn-status.sh
+   ./add-peer.sh TestDevice
+   systemctl restart wg-quick@wg0
+
+5. Clean up test:
+   rm DrKover-TestDevice.conf
+   (Remove test peer from wg0.conf)
+
+SYSTEM READY FOR DR. KOVER!

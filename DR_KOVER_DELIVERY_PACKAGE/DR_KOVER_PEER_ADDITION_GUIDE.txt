@@ -1,0 +1,278 @@
+================================================================================
+                    Dr. Kover VPN - Easy Peer Addition Guide
+================================================================================
+
+ADDING NEW DEVICES TO YOUR VPN
+
+Your VPN server is ready to add new devices anytime. Follow these simple steps 
+when you're ready to connect additional devices.
+
+================================================================================
+MANUAL PEER ADDITION PROCESS
+================================================================================
+
+Adding a new device requires several technical steps. This guide walks you 
+through the manual process. Each device addition takes approximately 10-15 
+minutes following these steps carefully.
+
+Step 1: Access Your Server
+--------------------------
+ssh root@184.105.7.112
+
+Step 2: Navigate to WireGuard Directory
+---------------------------------------
+cd /etc/wireguard
+
+Step 3: Generate Keys for New Device
+------------------------------------
+DEVICE_NAME="iPad"  # Change this to your device name
+wg genkey > ${DEVICE_NAME}_private.key
+cat ${DEVICE_NAME}_private.key | wg pubkey > ${DEVICE_NAME}_public.key
+
+Step 4: Get Server Public Key
+-----------------------------
+grep PrivateKey wg0.conf | cut -d' ' -f3 | wg pubkey
+
+Step 5: Find Next Available IP Address
+--------------------------------------
+grep -E "AllowedIPs.*10.0.0" wg0.conf | sed 's/.*10.0.0.\([0-9]*\).*/\1/' | sort -n | tail -1
+# Add 1 to this number for your new device IP
+
+Step 6: Create Client Configuration File
+----------------------------------------
+# Replace DEVICE_NAME and IP_NUMBER with your values
+cat > DrKover-${DEVICE_NAME}.conf << EOF
+[Interface]
+PrivateKey = $(cat ${DEVICE_NAME}_private.key)
+Address = 10.0.0.[IP_NUMBER]/32
+DNS = 1.1.1.1, 8.8.8.8
+
+[Peer]
+PublicKey = [SERVER_PUBLIC_KEY_FROM_STEP_4]
+AllowedIPs = 0.0.0.0/0
+Endpoint = 184.105.7.112:51820
+PersistentKeepalive = 25
+EOF
+
+Step 7: Add Peer to Server Configuration
+----------------------------------------
+# Add this to the end of wg0.conf (use nano wg0.conf)
+# DrKover - [DEVICE_NAME]
+[Peer]
+PublicKey = $(cat ${DEVICE_NAME}_public.key)
+AllowedIPs = 10.0.0.[IP_NUMBER]/32
+
+Step 8: Clean Up Key Files
+--------------------------
+rm ${DEVICE_NAME}_private.key ${DEVICE_NAME}_public.key
+
+Step 9: Restart VPN Service
+---------------------------
+systemctl restart wg-quick@wg0
+
+⚠️  WARNING: One mistake in this process can break your entire VPN system.
+
+================================================================================
+DETAILED EXAMPLE - Adding an iPad
+================================================================================
+
+Here's a complete example of adding an iPad to your VPN:
+
+1. Connect to server:
+   ssh root@184.105.7.112
+
+2. Navigate to directory:
+   cd /etc/wireguard
+
+3. Generate keys:
+   wg genkey > iPad_private.key
+   cat iPad_private.key | wg pubkey > iPad_public.key
+
+4. Get server public key:
+   grep PrivateKey wg0.conf | cut -d' ' -f3 | wg pubkey
+   # Copy this key for step 6
+
+5. Find next IP (example shows 10.0.0.5 is next):
+   grep -E "AllowedIPs.*10.0.0" wg0.conf
+   # If last device is 10.0.0.4, your new device gets 10.0.0.5
+
+6. Create iPad config:
+   cat > DrKover-iPad.conf << EOF
+   [Interface]
+   PrivateKey = $(cat iPad_private.key)
+   Address = 10.0.0.5/32
+   DNS = 1.1.1.1, 8.8.8.8
+
+   [Peer]
+   PublicKey = [PASTE_SERVER_PUBLIC_KEY_HERE]
+   AllowedIPs = 0.0.0.0/0
+   Endpoint = 184.105.7.112:51820
+   PersistentKeepalive = 25
+   EOF
+
+7. Add iPad to server config:
+   nano wg0.conf
+   # Add these lines at the end:
+   # DrKover - iPad
+   [Peer]
+   PublicKey = [PASTE_IPAD_PUBLIC_KEY_HERE]
+   AllowedIPs = 10.0.0.5/32
+
+8. Clean up:
+   rm iPad_private.key iPad_public.key
+
+9. Restart service:
+   systemctl restart wg-quick@wg0
+
+10. Test the connection:
+    wg show
+
+This process must be repeated exactly for each new device.
+
+================================================================================
+SETTING UP THE DEVICE
+================================================================================
+
+For iOS/Android:
+----------------
+1. Install WireGuard app from App Store/Play Store
+2. Transfer the .conf file to your device
+3. Import the configuration in WireGuard app
+4. Toggle connection ON
+
+For Windows/Mac/Linux:
+----------------------
+1. Install WireGuard from wireguard.com
+2. Import the .conf file
+3. Activate the connection
+
+================================================================================
+CHECKING YOUR VPN STATUS
+================================================================================
+
+See all connected devices:
+wg show
+
+See all configured devices:
+cat wg0.conf
+
+Check VPN service status:
+systemctl status wg-quick@wg0
+
+Use the status checker script:
+./vpn-status.sh
+
+⚠️  NOTE: Advanced management scripts are available but require technical setup.
+
+================================================================================
+MANAGING CONFIGURATION FILES
+================================================================================
+
+List all client configs:
+ls -la DrKover-*.conf
+
+Download config to your computer:
+(From your local computer)
+scp root@184.105.7.112:/etc/wireguard/DrKover-iPad.conf ./
+
+View a config file:
+cat DrKover-iPad.conf
+
+================================================================================
+TROUBLESHOOTING
+================================================================================
+
+If a device won't connect:
+---------------------------
+
+1. Check server status:
+   systemctl status wg-quick@wg0
+   wg show
+
+2. Restart the service:
+   systemctl restart wg-quick@wg0
+
+3. Check firewall:
+   ufw status
+
+If you need to remove a device:
+--------------------------------
+
+1. Edit the server config:
+   nano wg0.conf
+   (Remove the [Peer] section for that device)
+
+2. Restart the service:
+   systemctl restart wg-quick@wg0
+
+3. Delete the client config:
+   rm DrKover-[DEVICE-NAME].conf
+
+================================================================================
+NEED HELP?
+================================================================================
+
+This manual process can be complex and time-consuming. One small mistake can 
+break your entire VPN system.
+
+Professional Device Addition Service:
+-------------------------------------
+I can add devices remotely for you quickly and safely:
+- Single device: $50
+- 2-5 devices: $100  
+- 6+ devices: $150
+- Includes testing and verification
+
+Advanced Automation Setup:
+--------------------------
+I can install automated scripts on your server for easy device addition:
+- One-time setup: $200
+- Includes training and documentation
+- Add unlimited devices with simple commands
+
+General Technical Support:
+-------------------------
+For troubleshooting and other VPN issues:
+- Hourly rate: $150/hour
+- Remote access and diagnosis
+- Same-day response guaranteed
+
+Contact Information:
+-------------------
+Thomas Rodriguez
+Email: thomas@eastbayav.com
+Phone: (510) 666-5915
+
+Why pay for professional service?
+- No risk of breaking your VPN
+- Faster than doing it manually
+- Includes testing and verification
+- Professional documentation
+- Ongoing support included
+
+================================================================================
+SECURITY NOTES
+================================================================================
+
+- Each device gets unique keys and IP address
+- Devices can only see the internet, not each other
+- Server maintains all traffic logs for security
+- Configurations are HIPAA-compliant
+
+================================================================================
+CURRENT SETUP
+================================================================================
+
+Server IP: 184.105.7.112
+VPN Port: 51820
+Network Range: 10.0.0.x
+Encryption: ChaCha20 (AES-256 equivalent)
+DNS: 1.1.1.1, 8.8.8.8
+
+Your VPN is ready for expansion whenever you need it!
+
+⚠️  IMPORTANT: Manual device addition is complex and risky. Consider professional 
+service to avoid breaking your VPN system. See "NEED HELP?" section above.
+
+Keep this guide for reference, but remember - professional setup is faster, 
+safer, and includes support.
