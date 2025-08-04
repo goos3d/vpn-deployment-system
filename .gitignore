@@ -165,3 +165,16 @@ config.local.yml
 # Private testing moved to projects/ai-handoff-system/
 # PRIVATE_TESTING_PROTOCOL.md
 # PRIVATE_TESTING/
+
+# Proprietary AI Handoff System (Protected)
+projects/ai-handoff-system/AI_HANDOFF_SYSTEM.md
+projects/ai-handoff-system/VSCODE_AI_HANDOFF_SYSTEM.md
+projects/ai-handoff-system/AI_HANDOFF_QUICKSTART.md
+projects/ai-handoff-system/PRIVATE_TESTING_PROTOCOL.md
+projects/ai-handoff-system/PRIVATE_TESTING/
+AI_HANDOFF_QUICK_SETUP.md
+scripts/setup-ai-handoff-environment.sh
+
+# Proprietary business intelligence
+projects/business-planning/analysis/SUNDAY_BREAKTHROUGH_ANALYSIS.md
+projects/business-planning/analysis/PROOF_OF_CONCEPT_SUCCESS.md

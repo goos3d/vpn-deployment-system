@@ -22,12 +22,30 @@ Local Environment (AI #1)          GitHub Repository          Remote Environment
 
 ## 🚀 Implementation Workflow
 
-### Phase 1: Local AI Creates Handoff Branch
+### Prerequisites: VS Code Setup on Both Environments
 
-1. **Branch Creation**
+**IMPORTANT**: This system requires VS Code installed on both your local machine AND the remote server/VM for maximum effectiveness.
+
+**Automatic Setup:**
+```bash
+# Run this on both local and remote machines:
+./scripts/setup-ai-handoff-environment.sh
+```
+
+**Manual Setup:**
+- Install VS Code: https://code.visualstudio.com/
+- Install Git integration
+- Clone repository in VS Code
+- Sign in to GitHub account
+
+### Phase 1: Local AI Creates Handoff Branch (In VS Code)
+
+1. **Branch Creation in VS Code**
    ```bash
+   # Using VS Code terminal or tasks:
+   Ctrl/Cmd+Shift+P → "Tasks: Run Task" → "🤖 Create AI Handoff"
+   # or command line:
    git checkout -b ai-handoff-$(date +%Y%m%d-%H%M%S)
-   # or specific naming: ai-handoff-server-setup, ai-handoff-debugging, etc.
    ```
 
 2. **Create Task Document**
@@ -73,24 +91,34 @@ Local Environment (AI #1)          GitHub Repository          Remote Environment
    git push origin ai-handoff-branch-name
    ```
 
-### Phase 2: Remote AI Receives and Executes
+### Phase 2: Remote AI Receives and Executes (In VS Code on Server)
 
-1. **Download Latest**
+1. **Setup VS Code Environment on Server**
    ```bash
-   git clone https://github.com/username/repo-name.git
-   cd repo-name
-   git checkout ai-handoff-branch-name
+   # If not already done, run setup script:
+   ./scripts/setup-ai-handoff-environment.sh
    ```
 
-2. **Read Instructions**
-   - Parse `AI_HANDOFF_INSTRUCTIONS.md`
-   - Review context files
-   - Understand success criteria
+2. **Open Repository in VS Code**
+   ```bash
+   # Open VS Code on the server
+   code vpn-deployment-system
+   # or if already open, use Git panel (Ctrl/Cmd+Shift+G)
+   ```
 
-3. **Execute Tasks**
-   - Follow step-by-step instructions
-   - Adapt commands to local environment
-   - Document any deviations or issues
+3. **Download Latest Branch**
+   ```bash
+   # In VS Code terminal or Git panel:
+   git fetch origin
+   git checkout ai-handoff-branch-name
+   git pull origin ai-handoff-branch-name
+   ```
+
+4. **Execute Tasks in VS Code Environment**
+   - Open `AI_HANDOFF_INSTRUCTIONS.md` in VS Code
+   - Use integrated terminal for commands
+   - Edit files with VS Code editor
+   - Use Git panel for version control
 
 4. **Update Status**
    ```markdown
