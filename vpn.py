@@ -14,6 +14,7 @@ sys.path.insert(0, str(Path(__file__).parent / "src"))
 
 from src.cli.keygen import main as keygen_main
 from src.cli.client_config import main as client_config_main
+from src.cli.multi_site import multi_site
 from src.web.app import main as dashboard_main
 from src.utils.testing import main as testing_main
 
@@ -24,7 +25,7 @@ def cli():
     """
     🛡️ VPN Deployment System
     
-    Comprehensive WireGuard VPN management for dental software clients.
+    Comprehensive WireGuard VPN management for healthcare practices.
     """
     pass
 
@@ -41,6 +42,10 @@ def keygen(ctx):
 def client(ctx):
     """Generate client configurations and QR codes."""
     ctx.forward(client_config_main)
+
+
+# Add multi-site command group
+cli.add_command(multi_site, name="multi-site")
 
 
 @cli.command("dashboard")
@@ -62,16 +67,21 @@ def info():
     """Display system information and status."""
     click.echo("🛡️ VPN Deployment System v1.0.0")
     click.echo("=" * 40)
-    click.echo("For dental software secure remote access")
+    click.echo("For healthcare practice secure remote access")
     click.echo("")
     click.echo("📋 Available Commands:")
-    click.echo("  • keygen     - Generate WireGuard keys")
-    click.echo("  • client     - Create client configurations")
-    click.echo("  • dashboard  - Launch web management UI")
-    click.echo("  • test       - Run diagnostics")
+    click.echo("  • keygen      - Generate WireGuard keys")
+    click.echo("  • client      - Create client configurations")  
+    click.echo("  • multi-site  - Multi-location VPN management")
+    click.echo("  • dashboard   - Launch web management UI")
+    click.echo("  • test        - Run diagnostics")
     click.echo("")
     click.echo("📚 Documentation: docs/DEPLOYMENT_GUIDE.md")
-    click.echo("🌐 Web Dashboard: python -m vpn dashboard")
+    click.echo("🌐 Web Dashboard: python vpn.py dashboard")
+    click.echo("")
+    click.echo("🏥 Multi-Site Examples:")
+    click.echo("  python vpn.py multi-site create --sites 'Main,Clinic1,Clinic2' --client 'MedGroup'")
+    click.echo("  python vpn.py multi-site list --client 'MedGroup'")
 
 
 if __name__ == "__main__":
