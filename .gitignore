@@ -161,5 +161,7 @@ vpn_test_report.md
 # Local configuration
 config.local.yml
 .env.local
-PRIVATE_TESTING_PROTOCOL.md
-PRIVATE_TESTING/
+
+# Private testing moved to projects/ai-handoff-system/
+# PRIVATE_TESTING_PROTOCOL.md
+# PRIVATE_TESTING/

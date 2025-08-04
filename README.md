@@ -32,8 +32,15 @@ vpn-deployment-system/
 ├── templates/             # Configuration templates
 ├── clients/               # Generated client configurations
 ├── docs/                  # Professional documentation
-└── archived/              # Historical files and screenshots
+├── archived/              # Historical files and screenshots
+└── projects/              # Separated project directories
+    ├── ai-handoff-system/ # Revolutionary AI collaboration system
+    ├── business-planning/ # Strategic business development
+    ├── family-enterprise/ # Family business development
+    └── vpn-business-expansion/ # VPN service expansion plans
 ```
+
+> **Note**: The `projects/` directory contains related but separate initiatives that were discovered or developed alongside the core VPN system. Each project has its own README and documentation.
 
 ## 🚀 Quick Start
 
