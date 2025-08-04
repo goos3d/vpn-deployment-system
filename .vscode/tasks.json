@@ -2,6 +2,65 @@
 	"version": "2.0.0",
 	"tasks": [
 		{
+			"label": "🤖 Create AI Handoff",
+			"type": "shell",
+			"command": "${workspaceFolder}/scripts/create-ai-handoff.sh",
+			"args": ["${input:taskDescription}", "${input:environment}"],
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "shared",
+				"showReuseMessage": true,
+				"clear": false
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "🚀 Execute AI Handoff",
+			"type": "shell",
+			"command": "${workspaceFolder}/scripts/execute-ai-handoff.sh",
+			"args": ["${input:branchName}"],
+			"group": "build",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "shared"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "📊 Check Handoff Status",
+			"type": "shell",
+			"command": "git",
+			"args": ["log", "--oneline", "--grep=🤖", "-10"],
+			"group": "test",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "shared"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "🔄 Sync Handoff Branch",
+			"type": "shell",
+			"command": "git",
+			"args": ["pull", "origin", "${input:branchName}"],
+			"group": "build",
+			"presentation": {
+				"echo": true,
+				"reveal": "always"
+			},
+			"problemMatcher": []
+		},
+		{
 			"label": "VPN: Launch Dashboard",
 			"type": "shell",
 			"command": "/usr/local/bin/python3",
@@ -13,6 +72,70 @@
 			"group": "build",
 			"isBackground": true,
 			"problemMatcher": []
+		},
+		{
+			"label": "VPN: Generate Keys",
+			"type": "shell",
+			"command": "python",
+			"args": ["${workspaceFolder}/vpn.py", "keygen", "--server"],
+			"group": "build",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "shared"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "VPN: Create Client Config",
+			"type": "shell",
+			"command": "python",
+			"args": [
+				"${workspaceFolder}/vpn.py", 
+				"client",
+				"--name", "${input:clientName}",
+				"--email", "${input:clientEmail}"
+			],
+			"group": "build",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "shared"
+			},
+			"problemMatcher": []
+		}
+	],
+	"inputs": [
+		{
+			"id": "taskDescription",
+			"description": "What task needs to be accomplished?",
+			"default": "server-configuration",
+			"type": "promptString"
+		},
+		{
+			"id": "environment",
+			"description": "Target environment (windows-server, linux-vm, etc.)",
+			"default": "windows-server",
+			"type": "promptString"
+		},
+		{
+			"id": "branchName",
+			"description": "AI handoff branch name",
+			"type": "promptString"
+		},
+		{
+			"id": "clientName",
+			"description": "Client name",
+			"default": "NewClient",
+			"type": "promptString"
+		},
+		{
+			"id": "clientEmail",
+			"description": "Client email",
+			"default": "client@example.com",
+			"type": "promptString"
 		}
 	]
 }
