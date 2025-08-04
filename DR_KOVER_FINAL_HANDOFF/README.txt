@@ -15,11 +15,6 @@ WHAT'S IN THIS FOLDER:
    - Includes your service pricing and contact info
    - Positions manual process as difficult to encourage paid services
 
-🔧 VM_CLEANUP_CHECKLIST.txt
-   - Step-by-step VM cleanup instructions
-   - Removes your personal traces while preserving VPN
-   - Execute after sending the email
-
 ================================================================================
 SEND ORDER:
 ===========
@@ -29,10 +24,9 @@ SEND ORDER:
    - Attach DR_KOVER_PEER_ADDITION_GUIDE.txt
    - Send to Dr. Kover
 
-2. THEN CLEAN UP VM
-   - SSH into 184.105.7.112
-   - Follow VM_CLEANUP_CHECKLIST.txt step by step
-   - Remove all personal traces
+2. THEN CLEAN UP VM (PRIVATE - NOT FOR CLIENT)
+   - See separate VM cleanup instructions 
+   - Remove all personal traces from 184.105.7.112
    - Preserve VPN functionality
 
 ================================================================================
