@@ -1,0 +1,19 @@
+CLAUDE HANDOFF INSTRUCTIONS
+
+Repository: https://github.com/goos3d/vpn-deployment-system
+Branch: claude-handoff
+Key File: CLAUDE_HANDOFF_REPORT.md
+
+Mission: Fix Windows VPN server routing for Dr. Kover's dental practice
+
+Status: VPN connects but server routing broken
+
+Commands to start:
+git clone https://github.com/goos3d/vpn-deployment-system.git
+cd vpn-deployment-system
+git checkout claude-handoff
+cat CLAUDE_HANDOFF_REPORT.md
+
+Problem: Windows server at 184.105.7.112 needs IP forwarding and NAT configuration
+
+Solution: All PowerShell commands provided in the handoff report
