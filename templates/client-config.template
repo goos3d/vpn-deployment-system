@@ -1,0 +1,28 @@
+# VPN Client Configuration Template
+# This template will be populated by the client generation script
+
+# Client Information
+CLIENT_NAME="{{CLIENT_NAME}}"
+CLIENT_COMPANY="{{CLIENT_COMPANY}}"
+CLIENT_EMAIL="{{CLIENT_EMAIL}}"
+CLIENT_PHONE="{{CLIENT_PHONE}}"
+
+# Server Configuration
+SERVER_IP="{{SERVER_IP}}"
+SERVER_PORT="{{SERVER_PORT}}"
+VPN_NETWORK="{{VPN_NETWORK}}"
+
+# Support Information
+SUPPORT_EMAIL="{{SUPPORT_EMAIL}}"
+SUPPORT_PHONE="{{SUPPORT_PHONE}}"
+SUPPORT_COMPANY="{{SUPPORT_COMPANY}}"
+
+# File Paths (will be customized per client)
+LOG_FILE="{{LOG_FILE}}"
+CONFIG_DIR="{{CONFIG_DIR}}"
+BACKUP_DIR="{{BACKUP_DIR}}"
+CLIENT_DIR="{{CLIENT_DIR}}"
+
+# Branding
+SCRIPT_NAME="{{SCRIPT_NAME}}"
+COMPANY_NAME="{{COMPANY_NAME}}"
