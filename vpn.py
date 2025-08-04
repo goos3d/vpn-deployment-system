@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """
-VPN Deployment System CLI Entry Point
+Professional VPN Deployment System - Main CLI
 
-Provides a unified command-line interface for all VPN management tasks.
+Complete HIPAA-compliant VPN solution for healthcare practices.
+Provides automated deployment, management, and compliance reporting.
 """
 
 import click
@@ -15,17 +16,20 @@ sys.path.insert(0, str(Path(__file__).parent / "src"))
 from src.cli.keygen import main as keygen_main
 from src.cli.client_config import main as client_config_main
 from src.cli.multi_site import multi_site
+from src.cli.monitoring import monitor
+from src.cli.compliance import compliance
+from src.cli.backup import backup
 from src.web.app import main as dashboard_main
 from src.utils.testing import main as testing_main
 
 
 @click.group()
-@click.version_option("1.0.0")
+@click.version_option("3.0.0")
 def cli():
     """
-    🛡️ VPN Deployment System
+    🏥 Professional VPN Deployment System - Enterprise Edition
     
-    Comprehensive WireGuard VPN management for healthcare practices.
+    Complete HIPAA-compliant VPN infrastructure for healthcare organizations.
     """
     pass
 
@@ -44,8 +48,11 @@ def client(ctx):
     ctx.forward(client_config_main)
 
 
-# Add multi-site command group
+# Add all command groups
 cli.add_command(multi_site, name="multi-site")
+cli.add_command(monitor)
+cli.add_command(compliance)
+cli.add_command(backup)
 
 
 @cli.command("dashboard")
@@ -65,23 +72,90 @@ def test(ctx):
 @cli.command("info")
 def info():
     """Display system information and status."""
-    click.echo("🛡️ VPN Deployment System v1.0.0")
-    click.echo("=" * 40)
-    click.echo("For healthcare practice secure remote access")
+    click.echo("🛡️ VPN Deployment System v3.0.0 - Enterprise Edition")
+    click.echo("=" * 55)
+    click.echo("Professional VPN solutions for healthcare organizations")
     click.echo("")
-    click.echo("📋 Available Commands:")
+    click.echo("📋 Core Commands:")
     click.echo("  • keygen      - Generate WireGuard keys")
-    click.echo("  • client      - Create client configurations")  
-    click.echo("  • multi-site  - Multi-location VPN management")
+    click.echo("  • client      - Create client configurations") 
+    click.echo("  • multi-site  - Multi-location VPN deployments")
     click.echo("  • dashboard   - Launch web management UI")
     click.echo("  • test        - Run diagnostics")
     click.echo("")
-    click.echo("📚 Documentation: docs/DEPLOYMENT_GUIDE.md")
-    click.echo("🌐 Web Dashboard: python vpn.py dashboard")
+    click.echo("🔧 Enterprise Features:")
+    click.echo("  • monitor     - Real-time monitoring & alerts")
+    click.echo("  • compliance  - HIPAA audit & reporting")
+    click.echo("  • backup      - Disaster recovery & backups")
     click.echo("")
-    click.echo("🏥 Multi-Site Examples:")
-    click.echo("  python vpn.py multi-site create --sites 'Main,Clinic1,Clinic2' --client 'MedGroup'")
-    click.echo("  python vpn.py multi-site list --client 'MedGroup'")
+    click.echo("🏥 Healthcare Specialization:")
+    click.echo("  • HIPAA Technical Safeguards compliance")
+    click.echo("  • Automated compliance reporting")
+    click.echo("  • Real-time security monitoring")
+    click.echo("  • Professional audit documentation")
+    click.echo("  • Disaster recovery capabilities")
+    click.echo("")
+    click.echo("� Service Packages:")
+    click.echo("  • Single Site: $375-500")
+    click.echo("  • Multi-Site: $750-1500") 
+    click.echo("  • Enterprise: $1500-3000")
+    click.echo("")
+    click.echo("�📚 Documentation: docs/DEPLOYMENT_GUIDE.md")
+    click.echo("🌐 Web Dashboard: python vpn.py dashboard")
+    click.echo("📊 Quick Status: python vpn.py monitor status")
+    click.echo("🔍 Compliance Check: python vpn.py compliance quick-check")
+
+
+@cli.command("quick-setup")
+@click.option("--client-name", required=True, help="Client/practice name")
+@click.option("--package", default="professional", 
+              type=click.Choice(["basic", "professional", "enterprise"]),
+              help="Service package level")
+def quick_setup(client_name: str, package: str):
+    """Quick setup wizard for new VPN deployments."""
+    click.echo(f"🚀 Setting up {package} VPN package for {client_name}")
+    click.echo("=" * 50)
+    
+    package_features = {
+        "basic": [
+            "Generate server keys",
+            "Create client configuration", 
+            "Basic security setup"
+        ],
+        "professional": [
+            "Generate server keys",
+            "Create client configuration",
+            "HIPAA compliance verification",
+            "Professional documentation",
+            "Basic monitoring setup"
+        ],
+        "enterprise": [
+            "Generate server keys", 
+            "Multi-site configuration",
+            "Full compliance audit",
+            "Real-time monitoring",
+            "Automated backups",
+            "Professional reporting"
+        ]
+    }
+    
+    click.echo(f"📦 {package.title()} Package includes:")
+    for feature in package_features[package]:
+        click.echo(f"  ✅ {feature}")
+    
+    click.echo(f"\n🔧 Run these commands to complete setup:")
+    click.echo(f"  1. python vpn.py keygen --server")
+    click.echo(f"  2. python vpn.py client --name '{client_name}-Admin'")
+    
+    if package in ["professional", "enterprise"]:
+        click.echo(f"  3. python vpn.py compliance audit --client '{client_name}'")
+        click.echo(f"  4. python vpn.py monitor setup")
+    
+    if package == "enterprise":
+        click.echo(f"  5. python vpn.py backup configure")
+        click.echo(f"  6. python vpn.py multi-site create '{client_name}-Network'")
+    
+    click.echo(f"\n💡 Quick start dashboard: python vpn.py dashboard")
 
 
 if __name__ == "__main__":
