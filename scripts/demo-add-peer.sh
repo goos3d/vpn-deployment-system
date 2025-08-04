@@ -225,29 +225,24 @@ validate_peer_name() {
 ################################################################################
 
 get_next_available_ip() {
-    info "Finding next available IP address..."
-    
-    local next_ip=2  # Start from .2
+    local next_ip=2  # Professional standard: start from .2
     
     if [[ -f "$SERVER_CONFIG" ]]; then
-        # Extract used IPs and find next available
         local used_ips
         used_ips=$(grep -oP "$VPN_NETWORK\.\K[0-9]+" "$SERVER_CONFIG" 2>/dev/null | sort -n || echo "")
         
-        debug "Used IPs: $used_ips"
+        debug "Professional IP analysis - Used IPs: $used_ips"
         
         while echo "$used_ips" | grep -q "^${next_ip}$"; do
             ((next_ip++))
             if [[ $next_ip -gt 254 ]]; then
-                error "No available IP addresses in network $VPN_NETWORK.0/24"
+                error "Professional network full - contact support for expansion"
                 exit 1
             fi
         done
     fi
     
-    local assigned_ip="$VPN_NETWORK.$next_ip"
-    success "Next available IP: $assigned_ip"
-    echo "$assigned_ip"
+    echo "$VPN_NETWORK.$next_ip"
 }
 
 generate_keys() {
@@ -268,13 +263,10 @@ generate_keys() {
 }
 
 get_server_public_key() {
-    info "Retrieving server public key..."
-    
     # In demo mode, return a mock server public key
     local server_public_key="demo_server_public_key_$(date +%s)"
     
     debug "Demo server public key: ${server_public_key:0:20}..."
-    success "Server public key retrieved"
     
     echo "$server_public_key"
 }
@@ -317,29 +309,29 @@ add_peer_to_server_config() {
     success "Peer added to server configuration"
 }
 
-create_client_config() {
+create_professional_client_config() {
     local peer_name="$1"
     local private_key="$2"
     local client_ip="$3"
     local server_public_key="$4"
     local server_ip="$5"
     
-    info "Creating client configuration..."
-    
     local client_config_file="$CLIENT_DIR/DrKover-$peer_name.conf"
     
     if [[ $DRY_RUN -eq 1 ]]; then
-        info "DRY RUN: Would create client config: $client_config_file"
         echo "$client_config_file"
         return 0
     fi
     
     cat > "$client_config_file" << EOF
-# WireGuard Client Configuration
+# Professional WireGuard Client Configuration
 # Generated: $(date '+%Y-%m-%d %H:%M:%S')
 # Peer: $peer_name
 # Server: $server_ip:$VPN_PORT
+# 
+# Professional VPN Service by East Bay AV Solutions
 # Support: thomas@eastbayav.com | (510) 666-5915
+# Service Value: \$200 Professional Automation
 
 [Interface]
 PrivateKey = $private_key
@@ -353,9 +345,9 @@ AllowedIPs = 0.0.0.0/0
 PersistentKeepalive = 25
 EOF
 
+    # Professional security: restrictive permissions
     chmod 600 "$client_config_file" 2>/dev/null || true
     
-    success "Client configuration created: $client_config_file"
     echo "$client_config_file"
 }
 
@@ -546,7 +538,7 @@ main() {
     add_peer_to_server_config "$PEER_NAME" "$public_key" "$client_ip"
     
     # Create client configuration
-    client_config_file=$(create_client_config "$PEER_NAME" "$private_key" "$client_ip" "$server_public_key" "$SERVER_IP_OVERRIDE")
+    client_config_file=$(create_professional_client_config "$PEER_NAME" "$private_key" "$client_ip" "$server_public_key" "$SERVER_IP_OVERRIDE")
     
     # In production, we would restart WireGuard here
     info "In production: Would restart WireGuard service here"

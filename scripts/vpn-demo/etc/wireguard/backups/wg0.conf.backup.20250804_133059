@@ -1,0 +1,33 @@
+# WireGuard Server Configuration - Demo
+# Dr. Kover's VPN Server
+[Interface]
+PrivateKey = oK2qEhBhp3LBs3CFCqk5yQqfDlP7I5rAwC9W+Mip2X8=
+Address = 10.0.0.1/24
+ListenPort = 51820
+PostUp = iptables -A FORWARD -i %i -j ACCEPT; iptables -A FORWARD -o %i -j ACCEPT; iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+PostDown = iptables -D FORWARD -i %i -j ACCEPT; iptables -D FORWARD -o %i -j ACCEPT; iptables -t nat -D POSTROUTING -o eth0 -j MASQUERADE
+
+# Existing peers
+# Peer: iPhone-DrKover (added 2025-08-03 10:30:00)
+[Peer]
+PublicKey = 3vfrCBSU1Tq4I1MKpT7yc3QI5XMrP1dZ9Qg4K8E+2W0=
+AllowedIPs = 10.0.0.2/32
+
+# Peer: iPad-Reception (added 2025-08-03 14:15:00)
+[Peer]
+PublicKey = F+rPn3JkK4N6kx9DdB8oTcY2RvE3H7LmJ5Q4E6KzNx8=
+AllowedIPs = 10.0.0.3/32
+
+# Peer: iPhone-Hygienist (added 2025-08-04 13:09:18)
+[Peer]
+PublicKey = demo_public_key_38158_mock
+AllowedIPs = [0;34mℹ️  Finding next available IP address...[0m
+[0;32m✅ Next available IP: 10.0.0.2[0m
+10.0.0.2/32
+
+# Peer: TestDevice-DrKover (added 2025-08-04 13:29:15)
+[Peer]
+PublicKey = demo_public_key_39355_mock
+AllowedIPs = [0;34mℹ️  Finding next available IP address...[0m
+[0;32m✅ Next available IP: 10.0.0.2[0m
+10.0.0.2/32
