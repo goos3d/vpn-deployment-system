@@ -1,0 +1,27 @@
+# 🚀 Dr. Kover's VPN Quick Setup (5 Minutes)
+
+## **Step 1: Install WireGuard**
+**Mac**: App Store → Search "WireGuard" → Install  
+**iPhone**: App Store → Search "WireGuard" → Install  
+**Windows**: Go to wireguard.com/install → Download
+
+## **Step 2: Import Your Configuration**
+1. Open WireGuard app
+2. Click "Add Tunnel" or "+"
+3. Select file: `DrKover-VPN-Client.conf`
+4. Name it: "Practice VPN"
+
+## **Step 3: Connect & Work**
+1. Toggle switch to ON (turns green)
+2. Open your dental software
+3. Work from home securely!
+
+## **Daily Use:**
+- **Connect**: Toggle VPN ON in WireGuard app
+- **Work**: Access practice systems normally  
+- **Disconnect**: Toggle VPN OFF when done
+
+## **Support:**
+Email: [your-email] (30 days included)
+
+**You're now HIPAA compliant for remote work!** 🏥✅
