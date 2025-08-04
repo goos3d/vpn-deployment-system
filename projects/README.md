@@ -7,6 +7,8 @@ This directory contains separated projects that were previously mixed with the V
 ### 🤖 ai-handoff-system/
 Revolutionary AI-to-AI collaboration system discovered during VPN development. Enables distributed problem solving across network environments using GitHub branches as communication medium.
 
+**🔥 NEW**: Screenshot Intelligence System in development - converts technical screenshots into structured knowledge bases for persistent AI memory.
+
 ### 💼 business-planning/
 Business development, financial planning, and strategic analysis documents.
 - **cash-flow/**: Financing solutions and cash flow analysis

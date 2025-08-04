@@ -70,7 +70,7 @@ python vpn.py keygen --server
 python vpn.py keygen --client --name "ClientName"
 
 # Client configuration creation
-python vpn.py client --name "Practice-Desktop" --email "admin@practice.com"
+python vpn.py client --name "Practice-Desktop" --server-ip YOUR_SERVER_IP
 
 # Web dashboard management
 python vpn.py dashboard --port 5000
@@ -86,10 +86,11 @@ python vpn.py test --connectivity --hipaa-report
 **Challenge**: Complex routing, load balancing, failover
 **Your AI Handoff Advantage**: Systematically configure each location
 
-**Commands to add:**
+**Working commands:**
 ```bash
-python vpn.py multi-site --locations "Clinic1,Clinic2,Clinic3"
-python vpn.py load-balance --primary-server 192.168.1.100 --backup 192.168.1.101
+python vpn.py multi-site create "Clinic-Network"
+python vpn.py client --name "Clinic1-Admin" --server-ip PRIMARY_SERVER_IP
+python vpn.py client --name "Clinic2-Admin" --server-ip PRIMARY_SERVER_IP
 ```
 
 #### 2. **Mobile Healthcare Workers**
@@ -97,10 +98,10 @@ python vpn.py load-balance --primary-server 192.168.1.100 --backup 192.168.1.101
 **Challenge**: Multiple device types (iOS, Android, laptops)
 **Your Advantage**: QR code generation, device-specific configs
 
-**New features to build:**
+**Working commands:**
 ```bash
-python vpn.py mobile --device-type ios --user "Dr.Smith"
-python vpn.py qr-code --config clients/mobile-user.conf
+python vpn.py client --name "Dr-Smith-Mobile" --output ./clients
+python vpn.py dashboard  # Web interface includes QR code generation
 ```
 
 #### 3. **Temporary/Emergency Setups**
@@ -117,35 +118,38 @@ python vpn.py qr-code --config clients/mobile-user.conf
 
 #### Add Industry-Specific Templates
 ```bash
-# Legal compliance template
-python vpn.py template --industry legal --state california
+# Legal compliance setup
+python vpn.py quick-setup --client-name "Law-Firm" --package professional
 
-# Financial services template  
-python vpn.py template --industry finance --regulation sox
+# Financial services setup  
+python vpn.py quick-setup --client-name "Accounting-Firm" --package enterprise
 
 # Healthcare template (existing)
-python vpn.py template --industry healthcare --regulation hipaa
+python vpn.py quick-setup --client-name "Medical-Practice" --package professional
 ```
 
 #### Enhanced Monitoring
 ```bash
 # Compliance monitoring
-python vpn.py monitor --compliance-check --industry healthcare
+python vpn.py compliance audit --client "Dr-Kover-Practice"
 
 # Performance monitoring
-python vpn.py monitor --performance --alert-email admin@practice.com
+python vpn.py monitor setup  # Configure monitoring
+python vpn.py monitor run --daemon  # Start monitoring
 
 # Usage reporting
-python vpn.py report --monthly --client "Dr-Kover-Practice"
+python vpn.py monitor report --output monthly-report.txt
 ```
 
 #### Automated Client Onboarding
 ```bash
 # Complete client setup
-python vpn.py onboard --client-name "NewPractice" --industry dental --devices 5
+python vpn.py quick-setup --client-name "NewPractice" --package professional
 
-# Generate client package
-python vpn.py package --client "NewPractice" --format professional
+# Generate multiple client configurations
+python vpn.py client --name "NewPractice-Admin"
+python vpn.py client --name "NewPractice-Doctor1"
+python vpn.py client --name "NewPractice-Staff1"
 ```
 
 ## 🎯 AI Handoff Testing Opportunities

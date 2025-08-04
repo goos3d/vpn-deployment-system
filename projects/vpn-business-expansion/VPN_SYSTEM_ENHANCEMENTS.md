@@ -33,9 +33,9 @@ python vpn.py mesh-network --sites 3 --auto-route
 
 ```bash
 # Mobile-specific commands:
-python vpn.py mobile --device ios --user "Dr.Smith" 
-python vpn.py qr-generate --config mobile-configs/dr-smith.conf
-python vpn.py mobile-test --device-type android
+python vpn.py client --name "Dr-Smith-Mobile" --output ./clients
+python vpn.py dashboard  # Web interface includes QR code generation
+python vpn.py test --connectivity  # Test mobile connections
 ```
 
 **Implementation**: Generate mobile-optimized configs with QR codes
