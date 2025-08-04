@@ -23,10 +23,18 @@ class VPNDashboard:
     """Main VPN management dashboard."""
     
     def __init__(self, keys_dir="/etc/wireguard", server_endpoint=None):
-        self.app = Flask(__name__)
+        # Set template and static folders relative to this file
+        template_dir = Path(__file__).parent / "templates"
+        self.app = Flask(__name__, template_folder=str(template_dir))
         self.keys_dir = keys_dir
         self.server_endpoint = server_endpoint
-        self.key_manager = WireGuardKeyManager(keys_dir)
+        
+        # Try to initialize key manager, but handle errors gracefully
+        try:
+            self.key_manager = WireGuardKeyManager(keys_dir)
+        except Exception as e:
+            print(f"Warning: Key manager initialization failed: {e}")
+            self.key_manager = None
         
         # Try to load server configuration
         self.server_config = self._load_server_config()
