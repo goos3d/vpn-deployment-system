@@ -1,0 +1,28 @@
+[
+  {
+    "id": 1,
+    "timestamp": "2025-08-03T22:27:30.414684",
+    "image_path": "test.png",
+    "screenshot_type": "wireguard_status",
+    "extracted_fields": {
+      "status": "Active",
+      "endpoint": "184.105.7.112:51820",
+      "data_sent": "1.01 KiB"
+    },
+    "confidence": 95,
+    "kb_format": "| 14:32:15 | WireGuard: Active | [test.png](test.png) | Endpoint: 184.105.7.112:51820 |\n"
+  },
+  {
+    "id": 2,
+    "timestamp": "2025-08-03T22:30:10.679665",
+    "image_path": "test.png",
+    "screenshot_type": "wireguard_status",
+    "extracted_fields": {
+      "status": "Active",
+      "endpoint": "184.105.7.112:51820",
+      "data_sent": "1.01 KiB"
+    },
+    "confidence": 95,
+    "kb_format": "| 14:32:15 | WireGuard: Active | [test.png](test.png) | Endpoint: 184.105.7.112:51820 |\n"
+  }
+]

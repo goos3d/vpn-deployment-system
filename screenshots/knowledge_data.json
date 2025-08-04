@@ -1,0 +1,28 @@
+[
+  {
+    "id": 1,
+    "timestamp": "2025-08-03T22:19:27.097630",
+    "image_path": "test_screenshot.png",
+    "screenshot_type": "wireguard_status",
+    "extracted_fields": {
+      "screenshot_type": "wireguard_status",
+      "timestamp": "2025-08-03T22:19:27.095561",
+      "raw_text": "WireGuard VPN Status\n\nStatus: Active\n\nEndpoint: 184.105.7.112:51820\n\nData Sent: 1.01 KiB\n\nData Received: 2.34 KiB\n\nPing Results:\n\nPING 8.8.8.8: 64 bytes: time=23.4ms\nPING google.com: 64 bytes: time=45.2ms",
+      "extracted_fields": {
+        "status": "Active",
+        "endpoint": "184.105.7.112:51820",
+        "data_sent": "1.01 KiB",
+        "data_received": "2.34 KiB",
+        "ipv4_addresses": [
+          "8.8.8.8",
+          "184.105.7.112"
+        ],
+        "ports": [
+          "51820"
+        ]
+      }
+    },
+    "confidence": 94.81,
+    "kb_format": "| 22:19:27 | WireGuard: Active | [test_screenshot.png](test_screenshot.png) | Endpoint: 184.105.7.112:51820, Data: 1.01 KiB |\n"
+  }
+]

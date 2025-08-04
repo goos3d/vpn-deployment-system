@@ -22,6 +22,13 @@ from src.cli.backup import backup
 from src.web.app import main as dashboard_main
 from src.utils.testing import main as testing_main
 
+# Import screenshot CLI integration
+try:
+    from src.screenshot.cli_integration import add_screenshot_commands
+    SCREENSHOT_AVAILABLE = True
+except ImportError:
+    SCREENSHOT_AVAILABLE = False
+
 
 @click.group()
 @click.version_option("3.0.0")
@@ -53,6 +60,10 @@ cli.add_command(multi_site, name="multi-site")
 cli.add_command(monitor)
 cli.add_command(compliance)
 cli.add_command(backup)
+
+# Add screenshot commands if available
+if SCREENSHOT_AVAILABLE:
+    add_screenshot_commands(cli)
 
 
 @cli.command("dashboard")
@@ -87,6 +98,8 @@ def info():
     click.echo("  • monitor     - Real-time monitoring & alerts")
     click.echo("  • compliance  - HIPAA audit & reporting")
     click.echo("  • backup      - Disaster recovery & backups")
+    if SCREENSHOT_AVAILABLE:
+        click.echo("  • screenshot  - AI-powered screenshot analysis")
     click.echo("")
     click.echo("🏥 Healthcare Specialization:")
     click.echo("  • HIPAA Technical Safeguards compliance")
