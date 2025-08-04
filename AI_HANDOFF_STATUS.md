@@ -52,12 +52,78 @@
 
 **See AI_HANDOFF_CRITICAL.md for detailed instructions**
 
-## 🎯 Next Steps for Laptop
-1. Clone this handoff branch
-2. Install WireGuard client
-3. Import REAL-LIVE-TEST-CLIENT.conf
-4. Connect and test
-5. Report results back via GitHub
+## 🎯 Next Steps for Laptop - NEW TEST REQUIRED
+**CRITICAL**: Test a different config file to validate the fix worked
+
+### **📋 Test Protocol: Validate Fixed VPN Config**
+1. **Download Updated Repository**
+   ```bash
+   git pull origin ai-handoff-vpn-test-laptop-20250804-152701
+   # Get the newly fixed configuration files
+   ```
+
+2. **Test a Different Config File** (NOT the MacBook-Test you're currently using)
+   ```bash
+   # Option A: Test Your-Laptop-Test.conf (IP: 10.0.0.4)
+   # Option B: Test Test-Client-1.conf (IP: 10.0.0.2) 
+   # Option C: Test ThomasEastBayAV-Web_GUI_Peer_Add_Test.conf (IP: 10.0.0.3)
+   
+   # Copy one of the fixed configs from VPN_Configs/ directory
+   # Import into your WireGuard client
+   ```
+
+3. **Disconnect Current VPN** 
+   ```bash
+   # Disconnect your working MacBook-Test connection first
+   # This ensures we're testing the newly fixed config, not your existing one
+   ```
+
+4. **Connect with New Config and Test**
+   ```bash
+   # Import and connect with the new config file
+   # Expected: Different IP assignment (10.0.0.4, 10.0.0.2, or 10.0.0.3)
+   
+   # Test 1: Verify VPN connection
+   ping 10.0.0.1  # Should reach VPN server
+   
+   # Test 2: Check assigned IP
+   # Windows: ipconfig | findstr "10.0.0"
+   # Mac/Linux: ifconfig | grep "10.0.0"
+   
+   # Test 3: Verify internet through VPN
+   curl ifconfig.me  # Should show: 184.105.7.112 (VPN server IP)
+   
+   # Test 4: Test DNS resolution  
+   nslookup google.com  # Should work normally
+   
+   # Test 5: Test web browsing
+   curl -I https://google.com  # Should return HTTP 200 OK
+   ```
+
+5. **Document Success Results**
+   ```bash
+   # Update this file with results:
+   echo "✅ NEW CONFIG TEST SUCCESSFUL" >> AI_HANDOFF_STATUS.md
+   echo "🔗 Config tested: [CONFIG_NAME].conf" >> AI_HANDOFF_STATUS.md  
+   echo "📍 VPN IP assigned: [YOUR_NEW_IP]/24" >> AI_HANDOFF_STATUS.md
+   echo "🌐 External IP via VPN: $(curl -s ifconfig.me)" >> AI_HANDOFF_STATUS.md
+   echo "⏱️ Test completed: $(date)" >> AI_HANDOFF_STATUS.md
+   
+   # Commit results
+   git add AI_HANDOFF_STATUS.md
+   git commit -m "✅ VALIDATION: Different VPN config works - fix confirmed!"
+   git push origin ai-handoff-vpn-test-laptop-20250804-152701
+   ```
+
+### **🎯 Success Criteria**
+- ✅ New config connects without errors
+- ✅ Gets different IP than your MacBook-Test (10.0.0.2)  
+- ✅ Can ping VPN server (10.0.0.1)
+- ✅ External IP shows 184.105.7.112 (VPN server)
+- ✅ Internet browsing works normally through VPN
+- ✅ DNS resolution works properly
+
+**GOAL**: Prove that the placeholder key fix worked and ANY of the fixed configs can now connect successfully!
 
 ## 💰 Business Validation Status - CORE SUCCESS! 🎉
 **Dr. Kover's investment validation:**

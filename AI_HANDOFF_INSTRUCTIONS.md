@@ -20,6 +20,43 @@
 
 ## 📝 Detailed Tasks
 
+### 🚨 **NEW PRIORITY TASK**: Validate Fixed VPN Configuration
+**Purpose**: Test a newly fixed VPN config to confirm placeholder key issue resolved
+**Priority**: **CRITICAL** - This validates the recent fix
+**Commands**:
+```bash
+# Step 1: Pull latest fixes
+git pull origin ai-handoff-vpn-test-laptop-20250804-152701
+
+# Step 2: Run automated validation script
+# Windows:
+powershell -ExecutionPolicy Bypass -File validate_vpn_fix.ps1
+
+# Mac/Linux:
+chmod +x validate_vpn_fix.sh
+./validate_vpn_fix.sh
+
+# Step 3: Select a config to test (NOT MacBook-Test if you're already using it)
+# Options:
+# - Your-Laptop-Test.conf (IP: 10.0.0.4)
+# - Test-Client-1.conf (IP: 10.0.0.2)  
+# - ThomasEastBayAV-Web_GUI_Peer_Add_Test.conf (IP: 10.0.0.3)
+# - Your-Laptop-REAL-CONFIG.conf (IP: 10.0.0.5)
+
+# Step 4: Import selected config and connect
+# Step 5: Script will validate:
+# - VPN connection works
+# - Different IP assigned than current connection
+# - Internet access through VPN (external IP = 184.105.7.112)
+# - DNS resolution works
+# - HTTP connectivity works
+```
+**Expected Output**: 
+- ✅ All validation tests pass
+- ✅ Different VPN IP assigned (10.0.0.2, 10.0.0.3, 10.0.0.4, or 10.0.0.5)
+- ✅ External IP shows 184.105.7.112
+- ✅ Full internet functionality through VPN
+
 ### Task 1: Download and Install WireGuard Client
 **Purpose**: Install WireGuard to test the generated VPN configuration
 **Commands**:
