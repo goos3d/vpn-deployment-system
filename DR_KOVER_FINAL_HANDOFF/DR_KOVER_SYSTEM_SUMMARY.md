@@ -8,25 +8,35 @@
 
 ## 📱 **How to Add New Devices**
 
-1. **Open PowerShell as Administrator**
-2. **Navigate to management folder:**
+1. **Open PowerShell as Administrator** (Right-click PowerShell → "Run as Administrator")
+2. **Enable script execution** (one-time setup):
+   ```powershell
+   Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process -Force
+   ```
+3. **Navigate to management folder:**
    ```powershell
    cd C:\VPN-Management
    ```
-3. **Add a device:**
+4. **Add a device:**
    ```powershell
    .\Add-Peer.ps1 -DeviceName "DeviceName"
    ```
    Example: `.\Add-Peer.ps1 -DeviceName "iPhone"`
 
-4. **Transfer the configuration file** (created in C:\VPN-Management\) to your device
-5. **Import into WireGuard app** on the device
+5. **Transfer the configuration file** (created in C:\VPN-Management\) to your device
+6. **Import into WireGuard app** on the device
 
 ## 📊 **Check System Status**
-```powershell
-cd C:\VPN-Management
-.\VPN-Status.ps1
-```
+1. **Open PowerShell as Administrator**
+2. **Enable scripts** (if needed):
+   ```powershell
+   Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process -Force
+   ```
+3. **Check status:**
+   ```powershell
+   cd C:\VPN-Management
+   .\VPN-Status.ps1
+   ```
 
 This shows:
 - VPN service status

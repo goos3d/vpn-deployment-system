@@ -6,6 +6,12 @@ LOCATION: C:\VPN-Management\
 BASIC COMMANDS:
 ===============
 
+1. Open PowerShell as Administrator
+2. Enable script execution (one-time setup):
+   Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process -Force
+3. Navigate to management directory:
+   cd C:\VPN-Management
+
 Add a new device:
 .\Add-Peer.ps1 -DeviceName [DeviceName]
 Example: .\Add-Peer.ps1 -DeviceName "iPad"
