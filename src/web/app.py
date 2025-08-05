@@ -104,11 +104,13 @@ class VPNDashboard:
                     network_base=self.server_config['network']
                 )
                 
+                # Use working MacBook-Test pattern: VPN network only (preserves internet)
                 result = config_gen.save_client_package(
                     client_name=client_name,
                     client_private_key=client_keys['private_key'],
                     output_dir=Path(self.keys_dir) / "clients",
-                    generate_qr=True
+                    generate_qr=True,
+                    allowed_ips="10.0.0.0/24"  # CRITICAL: Only VPN network, not 0.0.0.0/0
                 )
                 
                 return jsonify({
