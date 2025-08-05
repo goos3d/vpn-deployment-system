@@ -18,6 +18,16 @@ sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 from src.core.keys import WireGuardKeyManager
 from src.core.client_config import ClientConfigGenerator
 
+# Fallback imports
+try:
+    from src.core.keys import check_wireguard_installation
+    WIREGUARD_AVAILABLE = check_wireguard_installation()
+except:
+    WIREGUARD_AVAILABLE = False
+
+if not WIREGUARD_AVAILABLE:
+    from src.core.keys_fallback import WireGuardKeyManagerFallback
+
 
 class VPNDashboard:
     """Main VPN management dashboard."""
@@ -26,7 +36,18 @@ class VPNDashboard:
         self.app = Flask(__name__)
         self.keys_dir = keys_dir
         self.server_endpoint = server_endpoint
-        self.key_manager = WireGuardKeyManager(keys_dir)
+        
+        # Initialize key manager with fallback
+        try:
+            if WIREGUARD_AVAILABLE:
+                self.key_manager = WireGuardKeyManager(keys_dir)
+            else:
+                print("⚠️ WireGuard tools not available, using fallback key manager")
+                self.key_manager = WireGuardKeyManagerFallback(keys_dir)
+        except Exception as e:
+            print(f"⚠️ Could not initialize key manager: {e}")
+            print("Using fallback key manager...")
+            self.key_manager = WireGuardKeyManagerFallback(keys_dir)
         
         # Try to load server configuration
         self.server_config = self._load_server_config()
@@ -44,16 +65,30 @@ class VPNDashboard:
             Path(self.keys_dir) / "public.key"
         ]
         
+        server_key_found = False
         for key_file in possible_keys:
             if key_file.exists():
                 config['public_key'] = key_file.read_text().strip()
+                server_key_found = True
                 break
+        
+        # If no server key found, generate one
+        if not server_key_found:
+            try:
+                print("🔑 Server keys not found, generating...")
+                server_keys = self.key_manager.save_server_keys("server")
+                config['public_key'] = server_keys['public_key']
+                print("✅ Server keys generated successfully")
+            except Exception as e:
+                print(f"⚠️ Could not generate server keys: {e}")
+                # Create a fallback configuration
+                config['public_key'] = "SERVER_KEY_PLACEHOLDER"
         
         # Try to get server endpoint from environment or config
         config['endpoint'] = (
             self.server_endpoint or 
             os.environ.get('VPN_SERVER_ENDPOINT') or
-            'YOUR_SERVER_IP'
+            '184.105.7.112'  # Default to our known server
         )
         
         config['port'] = int(os.environ.get('VPN_SERVER_PORT', 51820))
@@ -70,10 +105,17 @@ class VPNDashboard:
             clients = self._get_clients()
             server_status = self._get_server_status()
             
-            return render_template('dashboard.html', 
-                                 clients=clients,
-                                 server_status=server_status,
-                                 server_config=self.server_config)
+            try:
+                return render_template('dashboard.html', 
+                                     clients=clients,
+                                     server_status=server_status,
+                                     server_config=self.server_config)
+            except:
+                # Fallback template if dashboard.html doesn't exist
+                return render_template('vpn_dashboard.html', 
+                                     clients=clients,
+                                     server_status=server_status,
+                                     server_config=self.server_config)
         
         @self.app.route('/api/clients')
         def api_clients():

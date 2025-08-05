@@ -195,6 +195,14 @@ class WireGuardKeyManager:
             "public_file": str(public_file)
         }
 
+    def generate_server_keys(self) -> dict:
+        """Alias for save_server_keys for compatibility"""
+        return self.save_server_keys()
+    
+    def generate_client_keys(self, client_name: str) -> dict:
+        """Alias for save_client_keys for compatibility"""
+        return self.save_client_keys(client_name)
+
 
 def check_wireguard_installation() -> bool:
     """Check if WireGuard tools are installed."""
