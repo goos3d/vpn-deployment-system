@@ -60,6 +60,9 @@ class ClientConfigGenerator:
         else:
             self.allocated_ips.add(client_ip)
         
+        # Validate and clean server public key to prevent encoding issues
+        clean_server_key = self._clean_base64_key(self.server_public_key)
+        
         config_template = Template("""[Interface]
 # {{ client_name }} - Generated on {{ timestamp }}
 PrivateKey = {{ client_private_key }}
@@ -80,7 +83,7 @@ PersistentKeepalive = 25""")
             client_private_key=client_private_key,
             client_ip=client_ip,
             dns_servers=dns_servers,
-            server_public_key=self.server_public_key,
+            server_public_key=clean_server_key,
             preshared_key=preshared_key,
             server_endpoint=self.server_endpoint,
             server_port=self.server_port,
@@ -89,6 +92,31 @@ PersistentKeepalive = 25""")
         )
         
         return config
+    
+    def _clean_base64_key(self, key: str) -> str:
+        """
+        Clean base64 key by removing any non-base64 characters and BOM.
+        
+        Args:
+            key: Raw key string that may contain encoding artifacts
+            
+        Returns:
+            Clean base64-encoded key
+        """
+        import re
+        
+        # Remove byte order marks and other encoding artifacts
+        key = key.replace('\ufeff', '')  # Remove UTF-8 BOM
+        key = key.replace('\ufffd', '')  # Remove replacement characters
+        
+        # Remove any non-base64 characters except padding
+        key = re.sub(r'[^A-Za-z0-9+/=]', '', key)
+        
+        # Validate it's a proper base64 string
+        if not re.match(r'^[A-Za-z0-9+/]*={0,2}$', key):
+            raise ValueError(f"Invalid base64 key format: {key}")
+            
+        return key
     
     def generate_qr_code(self, config: str, size: int = 10, border: int = 4) -> str:
         """
@@ -142,9 +170,9 @@ PersistentKeepalive = 25""")
         # Generate configuration
         config = self.generate_config(client_name, client_private_key, **config_kwargs)
         
-        # Save configuration file
+        # Save configuration file with explicit UTF-8 encoding
         config_file = output_path / f"{client_name}.conf"
-        config_file.write_text(config)
+        config_file.write_text(config, encoding='utf-8')
         
         result = {
             "client_name": client_name,

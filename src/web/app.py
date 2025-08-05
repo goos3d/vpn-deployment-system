@@ -133,7 +133,8 @@ class VPNDashboard:
             if not config_file.exists():
                 return jsonify({'error': 'Configuration not found'}), 404
             
-            return send_file(config_file, as_attachment=True)
+            return send_file(config_file, as_attachment=True, 
+                           mimetype='text/plain; charset=utf-8')
         
         @self.app.route('/api/client/<client_name>/qr')
         def api_client_qr(client_name):

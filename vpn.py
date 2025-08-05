@@ -67,10 +67,24 @@ if SCREENSHOT_AVAILABLE:
 
 
 @cli.command("dashboard")
-@click.pass_context
-def dashboard(ctx):
+@click.option('--host', default='127.0.0.1', help='Host to bind to')
+@click.option('--port', default=5000, help='Port to bind to')
+@click.option('--debug', is_flag=True, help='Enable debug mode')
+@click.option('--keys-dir', default='./keys', help='Directory containing keys')
+@click.option('--server-endpoint', help='Server public IP/endpoint')
+def dashboard(host, port, debug, keys_dir, server_endpoint):
     """Launch the web management dashboard."""
-    ctx.forward(dashboard_main)
+    from src.web.app import VPNDashboard
+    
+    dashboard_app = VPNDashboard(keys_dir=keys_dir, server_endpoint=server_endpoint)
+    
+    click.echo(f"🌐 Starting VPN Dashboard on http://{host}:{port}")
+    click.echo(f"📁 Keys directory: {keys_dir}")
+    
+    if debug:
+        click.echo("🐛 Debug mode enabled")
+    
+    dashboard_app.run(host=host, port=port, debug=debug)
 
 
 @cli.command("test")
