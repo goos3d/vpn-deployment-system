@@ -1,0 +1,40 @@
+Subject: Your VPN Configuration - Ready to Connect
+
+Hi [CLIENT_NAME],
+
+Your secure VPN connection is ready! I've attached your personal WireGuard configuration file.
+
+**Setup Instructions:**
+
+**For Desktop (Windows/Mac/Linux):**
+1. Download WireGuard from: https://www.wireguard.com/install/
+2. Install WireGuard
+3. Open WireGuard app
+4. Click "Import tunnel(s) from file"
+5. Select the attached .conf file
+6. Click "Activate" to connect
+
+**For Mobile (iOS/Android):**
+1. Install WireGuard app from App Store/Google Play
+2. Open WireGuard app
+3. Tap the "+" button
+4. Choose "Create from file or archive"
+5. Select the attached .conf file
+6. Tap the toggle to connect
+
+**Your VPN Details:**
+- Server: 184.105.7.112
+- Your IP: [Will be assigned automatically]
+- DNS: 1.1.1.1, 8.8.8.8 (CloudFlare)
+
+**Security Notes:**
+- Keep this configuration file private
+- Don't share it with anyone
+- Contact me if you have connection issues
+
+The VPN will route all your internet traffic through our secure server, protecting your data and privacy.
+
+Let me know once you're connected and everything is working!
+
+Best regards,
+Dr. Kover
