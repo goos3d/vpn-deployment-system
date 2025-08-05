@@ -1,0 +1,46 @@
+Dr. Kover VPN - Windows Quick Reference Guide
+==============================================
+
+LOCATION: C:\VPN-Management\
+
+BASIC COMMANDS:
+===============
+
+Add a new device:
+.\Add-Peer.ps1 -DeviceName [DeviceName]
+Example: .\Add-Peer.ps1 -DeviceName "iPad"
+
+Check VPN status:
+.\VPN-Status.ps1
+
+List configuration files:
+Get-ChildItem *.conf
+
+AFTER ADDING A DEVICE:
+======================
+1. Restart WireGuard tunnel in the WireGuard app
+2. Copy the DrKover-[DeviceName].conf file to the device
+3. Import the .conf file into WireGuard app on the device
+4. Connect and test
+
+VPN SERVER INFO:
+================
+Server IP: 184.105.7.112
+Port: 51820
+Network: 10.0.0.x/24
+Server Config: C:\Program Files\WireGuard\Configurations\server.conf
+
+TROUBLESHOOTING:
+================
+- Check WireGuard app is running on Windows
+- Verify port 51820 is open in firewall
+- Check server configuration exists
+- Test connectivity after adding devices
+
+SUPPORT:
+========
+Contact: thomas@eastbayav.com
+Phone: (510) 666-5915
+
+The VPN system runs independently after installation.
+All management tools are in C:\VPN-Management\
